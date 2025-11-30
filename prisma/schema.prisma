@@ -16,65 +16,65 @@ datasource db {
 }
 
 model User {
-  id              String           @id @default(uuid()) @db.Uuid
-  createdAt       DateTime         @default(now())
-  updatedAt       DateTime         @updatedAt
-  email           String           @unique @db.VarChar(320)
-  username        String           @unique @db.VarChar(30)
-  name            String           @db.VarChar(70)
   bio             String?          @db.VarChar(150)
-  isGuest         Boolean
-  isForDevTesting Boolean?
+  createdAt       DateTime         @default(now())
+  email           String           @unique @db.VarChar(320)
   externalModules ExternalModule[]
+  id              String           @id @default(uuid()) @db.Uuid
+  isForDevTesting Boolean?
+  isGuest         Boolean
   likes           Like[]
-  Project         Project[]
+  name            String           @db.VarChar(70)
+  project         Project[]
+  updatedAt       DateTime         @updatedAt
+  username        String           @unique @db.VarChar(30)
 }
 
 model Project {
-  id          String          @id @default(uuid()) @db.Uuid
-  createdAt   DateTime        @default(now())
-  updatedAt   DateTime        @updatedAt
-  name        String          @db.VarChar(100)
-  graph       Json
-  description String?         @db.Text()
-  moduleType  ModuleType
-  userId      String          @db.Uuid
-  user        User            @relation(fields: [userId], references: [id], onDelete: Cascade)
-  basedOnId   String?         @db.Uuid
   basedOn     ExternalModule? @relation(fields: [basedOnId], references: [id])
+  basedOnId   String?         @db.Uuid
+  createdAt   DateTime        @default(now())
+  description String?         @db.Text()
+  graph       Json
+  id          String          @id @default(uuid()) @db.Uuid
+  moduleType  ModuleType
+  name        String          @db.VarChar(100)
+  updatedAt   DateTime        @updatedAt
+  user        User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId      String          @db.Uuid
 }
 
 model ExternalModule {
-  id              String     @id @default(uuid()) @db.Uuid
   createdAt       DateTime   @default(now())
-  updatedAt       DateTime   @updatedAt
-  isForDevTesting Boolean?
-  name            String     @db.VarChar(100)
-  graph           Json
-  likeCount       Int        @default(0)
-  projectId       String     @db.Uuid
   description     String?    @db.Text()
-  moduleType      ModuleType
-  userId          String     @db.Uuid
-  user            User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  graph           Json
+  id              String     @id @default(uuid()) @db.Uuid
+  isForDevTesting Boolean?
+  likeCount       Int        @default(0)
   likes           Like[]
-  Project         Project[]
+  moduleType      ModuleType
+  name            String     @db.VarChar(100)
+  project         Project[]
+  projectId       String     @db.Uuid
+  updatedAt       DateTime   @updatedAt
+  user            User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId          String     @db.Uuid
 }
 
 enum ModuleType {
   effect
-  utility
   instrument
+  utility
 }
 
 model Like {
-  id               String         @id @default(uuid()) @db.Uuid
   createdAt        DateTime       @default(now())
-  updatedAt        DateTime       @updatedAt
-  userId           String         @db.Uuid
-  user             User           @relation(fields: [userId], references: [id], onDelete: Cascade)
-  externalModuleId String         @db.Uuid
   externalModule   ExternalModule @relation(fields: [externalModuleId], references: [id], onDelete: Cascade)
+  externalModuleId String         @db.Uuid
+  id               String         @id @default(uuid()) @db.Uuid
+  updatedAt        DateTime       @updatedAt
+  user             User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId           String         @db.Uuid
 
   @@unique([userId, externalModuleId])
 }
