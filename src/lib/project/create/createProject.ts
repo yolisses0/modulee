@@ -5,7 +5,12 @@ import type { ProjectData } from '../data/ProjectData';
 import { createGraphDataByModuleType } from '../ui/createGraphDataByModuleType';
 
 export async function createProject(arg: object) {
-	const data = ProjectSchema.pick({ name: true, userId: true, moduleType: true }).parse(arg);
+	const data = ProjectSchema.pick({
+		createdAutomatically: true,
+		moduleType: true,
+		name: true,
+		userId: true,
+	}).parse(arg);
 
 	const moduleType = ModuleTypeSchema.parse(data.moduleType);
 	const graphData = createGraphDataByModuleType(moduleType);

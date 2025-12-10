@@ -1,12 +1,13 @@
 import prisma from '$lib/prisma';
 import { verifyGoogleCredential } from './getCredentialFromCode';
 import { getCredentialFromCode } from './google/verifyGoogleCode';
+import { transferGuestUserContent } from './transferGuestUserContent';
 import { generateUniqueUsername } from './username/generateUniqueUsername';
 import { getIsUsernameAvailableFromDatabase } from './username/getIsUsernameAvailableFromDatabase';
 
 type SignInParams =
-	| { code?: undefined; credential: string }
-	| { code: string; credential?: undefined };
+	| { currentUserId?: string; code?: undefined; credential: string }
+	| { currentUserId?: string; code: string; credential?: undefined };
 
 export async function signIn(params: SignInParams) {
 	const credential = params.credential ?? (await getCredentialFromCode(params.code));
@@ -30,12 +31,14 @@ export async function signIn(params: SignInParams) {
 		{ maxAttempts: 100, getRandomValue: () => Math.random() },
 		getIsUsernameAvailableFromDatabase,
 	);
-	return await prisma.user.create({
-		data: {
-			name,
-			email,
-			username,
-			isGuest: false,
-		},
-	});
+	const user = await prisma.user.create({ data: { name, email, username, isGuest: false } });
+
+	if (params.currentUserId) {
+		await transferGuestUserContent({
+			guestUserId: params.currentUserId,
+			newUserId: user.id,
+		});
+	}
+
+	return user;
 }

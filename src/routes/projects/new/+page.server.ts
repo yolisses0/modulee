@@ -7,6 +7,7 @@ import type { PageServerLoad } from './$types';
 export const load: PageServerLoad = async ({ locals }) => {
 	const { userId } = getSession(locals);
 	const projectData = await createProject({
+		createdAutomatically: true,
 		moduleType: 'instrument',
 		name: 'Untitled project',
 		userId,

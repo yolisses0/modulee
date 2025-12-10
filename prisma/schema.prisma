@@ -31,17 +31,18 @@ model User {
 }
 
 model Project {
-  basedOn     ExternalModule? @relation(fields: [basedOnId], references: [id])
-  basedOnId   String?         @db.Uuid
-  createdAt   DateTime        @default(now())
-  description String?         @db.Text()
-  graph       Json
-  id          String          @id @default(uuid()) @db.Uuid
-  moduleType  ModuleType
-  name        String          @db.VarChar(100)
-  updatedAt   DateTime        @updatedAt
-  user        User            @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId      String          @db.Uuid
+  basedOn              ExternalModule? @relation(fields: [basedOnId], references: [id])
+  basedOnId            String?         @db.Uuid
+  createdAt            DateTime        @default(now())
+  createdAutomatically Boolean         @default(false)
+  description          String?         @db.Text()
+  graph                Json
+  id                   String          @id @default(uuid()) @db.Uuid
+  moduleType           ModuleType
+  name                 String          @db.VarChar(100)
+  updatedAt            DateTime        @updatedAt
+  user                 User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId               String          @db.Uuid
 }
 
 model ExternalModule {

@@ -20,7 +20,12 @@ export const actions = {
 		const name = data.get('name');
 		const { userId } = getSession(locals);
 		const moduleType = data.get('moduleType');
-		const projectData = await createProject({ name, userId, moduleType });
+		const projectData = await createProject({
+			createdAutomatically: false,
+			moduleType,
+			name,
+			userId,
+		});
 		redirect(303, getProjectFriendlyPath(projectData));
 	},
 
